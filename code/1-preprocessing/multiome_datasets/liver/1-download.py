@@ -127,10 +127,19 @@ counts = counts.loc[:, var["symbol"]]
 adata = sc.AnnData(scipy.sparse.csr_matrix(counts.values), obs=obs, var=var)
 
 # %%
-transcripts = chd.biomart.get_transcripts(
-    chd.biomart.Dataset.from_genome(genome), gene_ids=adata.var.index.unique()
-)
-pickle.dump(transcripts, (folder_data_preproc / "transcripts.pkl").open("wb"))
+pickle_path = folder_data_preproc / "transcripts.pkl"
+
+if pickle_path.exists():
+    print("Loading transcripts from pickle...")
+    with open(pickle_path, "rb") as f:
+        transcripts = pickle.load(f)
+else:
+    print("Generating transcripts and saving to pickle...")
+    transcripts = chd.biomart.get_transcripts(
+        chd.biomart.Dataset.from_genome(genome), gene_ids=adata.var.index.unique()
+    )
+    with open(pickle_path, "wb") as f:
+        pickle.dump(transcripts, f)
 
 # %%
 # only retain genes that have at least one ensembl transcript
@@ -162,6 +171,7 @@ sc.pp.highly_variable_genes(adata)
 
 sc.pp.neighbors(adata)
 sc.tl.umap(adata)
+sc.pl.umap(adata)
 
 # %%
 adata.layers["normalized"] = adata.X

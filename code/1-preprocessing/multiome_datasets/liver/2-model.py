@@ -14,7 +14,6 @@ import tqdm.auto as tqdm
 import chromatinhd as chd
 import polyptich as pp
 
-import pysam
 import eyck
 
 chd.set_default_device("cpu")
@@ -40,7 +39,7 @@ clustering = chd.data.Clustering.from_labels(
 fragments = chd.data.Fragments(folder_dataset / "fragments" / "100k100k")
 
 # %%
-eyck.m.t.plot_umap(transcriptome, ["Ly6c2", "Clec4f", "Cdh5", "Spi1", "Zeb2", "Hdac9", "Mki67"], datashader = True).display()
+eyck.m.t.plot_umap(transcriptome, ["Stab2", "Ptprb", "Clec4f", "Cdh5"], datashader = True).display()
 
 # %% [markdown]
 # ## Training
@@ -69,14 +68,14 @@ models = chd.models.diff.model.binary.Models.create(
     ),
     train_params = dict(
         early_stopping=False,
-        n_epochs = 5, # <----- originally I used 40
+        n_epochs = 10, # <----- originally I used 40
     ),
     path=model_folder,
     reset = True,
 )
 
 # %%
-models.train_models()
+models.train_models(device="cuda")
 
 # %%
 models.models["0"].trace.plot()
@@ -104,10 +103,10 @@ regionpositional
 
 # %%
 # gene_id = transcriptome.gene_id("Slc40a1")
-# gene_id = transcriptome.gene_id("Cdh5")
+gene_id = transcriptome.gene_id("Cdh5")
 # gene_id = transcriptome.gene_id("Id3")
 # gene_id = transcriptome.gene_id("Lhx2")
-gene_id = transcriptome.gene_id("Bmp10")
+# gene_id = transcriptome.gene_id("Bmp10")
 # gene_id = transcriptome.gene_id("Lyve1")
 windows = regionpositional.select_windows(
     gene_id,
@@ -270,4 +269,5 @@ fig.main.add_under(panel_genes, padding=0.0, padding_up = 0.2)
 fig.display()
 
 # %%
-eyck.m.t.plot_umap(transcriptome, ["Vwf"], datashader = False, panel_size = 3).display()
+eyck.m.t.plot_umap(transcriptome, ["Cdh5"], datashader = False, panel_size = 3).display()
+# %%

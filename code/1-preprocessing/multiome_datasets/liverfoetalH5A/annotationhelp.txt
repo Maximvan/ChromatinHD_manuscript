@@ -1,0 +1,127 @@
+
+
+
+________________________________________________________
+Myeloid cells
+-----------------------
+        pDCs
+SCT
+LILRA4
+CLEC4C
+MYBL2
+PACSIN1
+IL3RA
+SPIB
+PLD4
+BCL11A? everywhere?
+
+----------------------
+        cDC1s
+
+HLA-DOB?
+HLA-DPB1?
+=> not present, come later in development?
+----------------------
+        cDC2s
+CD1C => KC somewhere
+HLA-DQA1 => upper upper part monocyte cluster? and part of pro-B
+CLEC10A => upper upper part monocyte cluster
+HLA-DRA => upper part monocyte cluster
+CSF2RA => monocyte cluster and pDCs
+HLA-DQB1 => upper upper part monocyte cluster
+HLA-DPB1 => upper upper part monocyte cluster
+CD74 => everywhere, upper part monocyte, pDCs, stem cells, B cells
+HLA-DRB5 => upper upper part monocyte cluster
+HLA-DPA1 => upper upper part monocyte cluster
+HLA-DRB1 => upper part monocyte cluster
+-----------------------
+________________________________________________________
+
+Lymphoid cells
+--------------
+        Resident NK cells
+KLRC1
+IL2RB
+NCR1
+TOX2
+TXK
+CCL3
+NCAM1
+P2RY11
+EOMES
+--------------
+        T cells
+=> not present, come later in development?
+IL7R? small weird group has it?
+--------------
+        Circulating NK/NKT cells
+GNLY?
+--------------
+        Neutrophils
+=> not present, come later in development?
+CSF3R in monocytes and HCS and CMP?
+MPO in CMP? GP?
+AZU1 in CMP? GP?
+--------------
+        Basophils/Mast cells
+CPA3
+MS4A2
+GATA2
+HPGDS2
+HDC => also in MEP region
+KIT => most present in that part but also everywhere
+GCSAML
+SLC18A2
+IL1RL1
+VWA5A
+________________________________________________________
+
+MYELOID CELLS 
+-------------
+        monocyte
+S100A9
+VCAN
+
+THBS1=> gradient in MK too
+
+AQP9 => only bottom left part
+FCN1 => less in KC/DC2
+CD36 => in late MK and late ERY and in weird cluster bottom
+------------
+        immature lipid associated macrophage LAM 
+FN1 => in weird cluster left
+MT1G => in weird cluster left
+
+SLC16A10
+CD9 => late MK cells
+EMP1 => in weird cluster bottom
+APOC1 => in weird cluster left
+
+LMNA => basophils
+
+FBP1 => in weird cluster left
+---------------
+        M1 macrophages
+A2M +> in weird cluster left
+--------------
+        moKC
+SLCO2B1 => top monocyte and weird cluster left
+NRP1 => top monocyte and weird cluster bottom and pDCs
+A2M => weird cluster left
+FRMD4A => gradient going up to top part monocyte and weird cluster bottom
+APOE => weird cluster left
+--------------
+        KCs
+ITGAD => top part LMPP
+VCAM1 => weird cluster left
+BCAM => weird cluster bottom
+CDH5 => weird cluster bottom
+FEZ1 => weird cluster bottom
+LYVE1 => weird cluster bottom
+--------------
+
+1	GATA1, KLF1, TESPA1	MEMP
+1	AHSP, GATA1	Early_Ery
+1	HBA1, ALAS2	Late_Ery
+1	GATA2, ITGA2B	Early_MK
+ENPP3 => weird bump on MK cells
