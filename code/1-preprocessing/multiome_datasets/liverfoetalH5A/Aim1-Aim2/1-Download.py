@@ -150,8 +150,6 @@ print(combined_data.head())
 # %%
 # Check for duplicates in 'sequence_id'
 duplicates = combined_data[combined_data.duplicated('sequence_id', keep=False)]
-
-
 if duplicates.empty:
     print("No duplicate sequence IDs found across samples.")
 else:

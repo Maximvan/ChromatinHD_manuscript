@@ -46,7 +46,7 @@ model_folder = (
 )
 
 # %%
-eyck.m.t.plot_umap(transcriptome, ["AZU1", "MPO"], datashader = True).display()
+eyck.m.t.plot_umap(transcriptome, ["AZU1", "MPO", "celltype"], datashader = True).display()
 
 
 # %% [markdown]
@@ -71,7 +71,7 @@ models = chd.models.diff.model.binary.Models.create(
     ),
     train_params = dict(
         early_stopping=False,
-        n_epochs = 40, # <----- originally I used 40
+        n_epochs = 10, # <----- originally I used 40
     ),
     path=model_folder,
     reset = True,
@@ -167,22 +167,26 @@ def analyze_gene(gene_marker, cells_of_interest, transcriptome, regionpositional
 
     motifs_oi = pd.concat([
         pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SPI1"])], "group": "SPI1"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SUH"])], "group": "RBPJ"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["HEY1", "HES1"])], "group": "HEY1/HES1"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["NR1H3"])], "group": "NR1H3"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["RXRA"])], "group": "RXRA"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["PPARG"])], "group": "PPARG"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SMAD4"])], "group": "SMAD4"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["RREB1"])], "group": "RREB1"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["TCF7L1", "TCF3", "TCF7L2"])], "group": "TCF7L1/TCF3"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MEIS3"])], "group": "MEIS3"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["KLF7"])], "group": "KLF7"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SPIC"])], "group": "SPIC"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MEF2A"])], "group": "MEF2A"}),
-        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["LHX2"])], "group": "LHX2"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SUH"])], "group": "RBPJ"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["HEY1", "HES1"])], "group": "HEY1/HES1"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["NR1H3"])], "group": "NR1H3"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["RXRA"])], "group": "RXRA"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["PPARG"])], "group": "PPARG"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SMAD4"])], "group": "SMAD4"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["RREB1"])], "group": "RREB1"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["TCF7L1", "TCF3", "TCF7L2"])], "group": "TCF7L1/TCF3"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MEIS3"])], "group": "MEIS3"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["KLF7"])], "group": "KLF7"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["SPIC"])], "group": "SPIC"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MEF2A"])], "group": "MEF2A"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["LHX2"])], "group": "LHX2"}),
         # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["FLI1"])], "group": "FLI1"}),
         # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["GATA1"])], "group": "GATA1"}),
         # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["GATA2"])], "group": "GATA2"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MAF"])], "group": "MAF"}),
+        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["MAFB"])], "group": "MAFB"}),
+        # pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["KLF2"])], "group": "KLF2"}),
+        pd.DataFrame({"motif": motifscan.motifs.index[motifscan.motifs.tf.isin(["KLF4"])], "group": "KLF4"}),
         
     ]).set_index("motif")
 
@@ -193,7 +197,7 @@ def analyze_gene(gene_marker, cells_of_interest, transcriptome, regionpositional
     cluster_info = clustering.cluster_info.loc[cells_of_interest]
     slices = regionpositional.calculate_slices(-0.5, step=25)
     differential_slices = regionpositional.calculate_differential_slices(
-        slices, fc_cutoff=1.5, a="Monocyte_I", b="Macrophage_II"
+        slices, fc_cutoff=1.5, a="Macrophage_II", b="Monocyte_I"
     )
 
     fig = chd.grid.Figure(chd.grid.Grid(padding_height=0.01, padding_width=0.05))
@@ -228,6 +232,7 @@ def analyze_gene(gene_marker, cells_of_interest, transcriptome, regionpositional
         gene_id,
         cluster_info=cluster_info,
         show_n_cells=False,
+        layer= "magic",
     )
     fig.main.add_right(panel_expression, panel_differential)
 
@@ -311,10 +316,9 @@ gene_list = [
 # don't work with ensembl: 'CLIP2','PVT1', 
 
 # %%
-#"CD5L",
 # Top 20 KC markers (from Liver Atlas)
 gene_list = [
-            "TIMD4", "SLC16A9", "NDST3",
+            "CDH5", "TIMD4", "SLC16A9", "NDST3",
             "ITGAD",  "VCAM1", "SELENBP1",
             "BCAM", "CDH5", "CETP", "RND3",
             "FEZ1", "FABP3", "SDC3", "CXCL12",
@@ -323,9 +327,8 @@ gene_list = [
 
 # %%
 # Top KC markers (conserved across species) (https://www.cell.com/immunity/fulltext/S1074-7613(22)00395-8)
-#"CD5L",
 gene_list = [
-             "SLC1A3", "CD163", "FOLR2",
+            "CD5L", "SLC1A3", "CD163", "FOLR2",
             "TIMD4", "MARCO", "GFRA2", "ADRB1", "TMEM26",
             "SLC40A1", "HMOX1", "SLC16A9", "VCAM1", "SUCNR1"
             ]
@@ -364,8 +367,28 @@ gene_list = [
 # %%
 # Thesis: Blood cell maturation story
 gene_list = [
-            "FLI1", "GATA1", "GATA2", "TFRC", "GYPA", "ITGA2B", "ITGB2"
+            "FLI1", "GATA1", "GATA2", "TFRC", "GYPA"
 ]
+
+# %%
+# Thesis: Macrophage cell development story
+gene_list = [
+    "SPI1", "MAFB", "KLF4"
+    ]
+
+# %%
+# Thesis: Macrophage cell maturation story
+gene_list = [
+    "RUNX1", "SPI1", "CSF1R"
+    ]
+
+# %%
+# Thesis: classical macrophages vs EBI macrophages
+gene_list = [
+    'PLCG2', 'ANK1', 'SPTA1', 'WNT5B', 'HSPA5', 'ZBTB16', 'TFR2', 'RIPOR3', 'TAF1D', 'DNMT1',
+    'FOSB', 'CD83', 'NAMPT', 'AHNAK', 'HLA-DQA1', 'RRP12', 'KLF6', 'CD74', 'RAB11FIP1',
+    'SAMHD1', 'MYO1F', 'SAT1', 'ABR', 'CIITA', 'AOAH', 'FOS', 'STAB1', 'PLXDC2', 'CSF2RA'
+    ]
 
 # %%
 # KC and MACRO markers (https://www.sciencedirect.com/science/article/pii/S0142961218307932?via%3Dihub)
@@ -392,8 +415,12 @@ gene_list = [
 # %%
 # Niche signals and transcription factors involved in tissue-resident macrophage development (https://www.sciencedirect.com/science/article/pii/S0008874918300534)
 gene_list = [
-    "NR1H3", "SPIC", "CSF1R", "MAFB", "KLF2", "KLF4", "TIMD4", "CLEC4F", "SPIC", "NR1H3"
+    "RUNX1", "SPI1", "CSF1R", "MAFB", "KLF2", "KLF4", "TIMD4", "CLEC4F", "SPIC", "NR1H3", "AIF1", "MERTK", "ADGRE1"
     ]
+
+gene_list = [
+    "RUNX1", "SPI1", "CSF1R"
+]
 
 # %%
 # Fetal liver macrophages contribute to the hematopoietic stem cell niche by controlling granulopoiesis (Fetal liver macrophages contribute to the hematopoietic stem cell niche by controlling granulopoiesis)
@@ -413,6 +440,10 @@ cells_of_interest = ["HSCs", "CMP/GMP", "Monocyte_I", "Monocyte_II", "Monocyte_I
 # %%
 # Blood trajectory
 cells_of_interest = ["HSCs", "MEP", "Early_Ery", "Mid_Ery", "Late_Ery", "Early_MK", "Late_MK"]
+
+# %%
+# KC + EBI
+cells_of_interest = ["Macrophage_I", "Macrophage_II", "EBI Macrophages"]
 
 # %%
 # Myeloid cells
@@ -439,7 +470,7 @@ cells_of_interest = ["HSCs", "CMP/GMP", "Granulocyte", "Monocyte_I", "Monocyte_I
 # %%
 # gene_list = ["SIGLEC1", "MERTK", "CLEC4F", "CLEC7A", "CD163", "CD68", "MRC1", "HAVCR2"]
 # gene_list = ["PRDX1", "PRDX2", "PRDX3", "PRDX4", "PRDX5", "PRDX6", "MPO", "LPO", "EPX", "PRDX1", "CYBA", "CYBB"]
-gene_list = ["MRC1", "SIGLEC1", "VCAM1"]
+gene_list = ['CSF1R']
 for gene in gene_list:
     if gene in transcriptome.var.symbol.tolist():
         print(gene)
@@ -481,12 +512,86 @@ eyck.m.t.plot_umap(adata, gene_list, datashader=False).display()
 # %% 
 def gene_id(adata, symbol):
     return adata.var.reset_index().set_index("symbol").loc[symbol, "gene_ids"]
+sc.pl.umap(adata, 
+           color=(gene_id(adata, ["SPI1"])), 
+           cmap="rocket",
+           layer="magic")
+
+# %%
 adata2 = adata[adata.obs["celltype"].isin(cells_of_interest)]
-sc.pl.umap(adata2, color=(gene_id(adata2, ["FLI1"])), cmap="rocket")
+
+gene_list = [
+    "CD14", "CD68", "CD163",
+    "CD200R1", "CD86", "CD83",
+    "CD14", "FCGR2A", "CD68", "ITGAM",
+    "CLEC4F", "ID3"
+]
+
 # %%
 eyck.m.t.plot_umap(adata2, 
-                   ["SIGLEC1", "CD163", "celltype"], 
+                   ["ANK1", "EMP2", "EPOR", "CSF2RA", "celltype"], 
+                   norms=(0,"q.99"),
                    legend="under panel",
                    panel_size= 1.5,
-                   ncol=1,
-                   datashader=True).display()
+                   #ncol=1,
+                   layer="magic",
+                   datashader=False).display()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# %%
+sc.tl.rank_genes_groups(
+    adata2, "leiden", method="wilcoxon", key_added="wilcoxon", use_raw=False
+)
+
+# %%
+# Extract the dictionary of gene names from recarray
+top_genes = {cluster: adata2.uns["wilcoxon"]["names"][cluster] for cluster in adata2.uns["wilcoxon"]["names"].dtype.names}
+
+# Convert to DataFrame
+num_top_genes = 20  # Adjust the number of genes to retrieve
+top_genes_df = pd.DataFrame({f"Cluster {cluster}": top_genes[cluster][:num_top_genes] for cluster in top_genes})
+
+# %%
+diffexp = (
+    sc.get.rank_genes_groups_df(adata2, group=None, key="wilcoxon")
+    .sort_values("scores", ascending=False)
+    .groupby("group")
+    .head(10)
+)
+diffexp["symbol"] = diffexp["names"].apply(lambda x: adata2.var.loc[x, "symbol"])
+
+# %%
+symbols_dict = {}
+for i in range(27):
+    symbols_dict[f"symbols{i}"] = diffexp[diffexp.group == str(i)]["symbol"].tolist()
+
+def symbol(adata, gene):
+    return adata.var.reset_index().set_index("gene").loc[gene, "symbol"]
+
+# %%
+sc.pl.dotplot(
+            adata2, 
+            var_names=symbol(adata2, np.unique(top_genes_df.iloc[:3].values.flatten())), 
+            gene_symbols="symbol",
+            groupby="celltype"
+            )
+
+
+# %%

@@ -155,6 +155,7 @@ sc.pl.umap(
 # %%
 magic_operator = magic.MAGIC(knn=30, solver="approximate")
 X_smoothened = magic_operator.fit_transform(adata.X)
+X_smoothened[X_smoothened < 0] = 0
 adata.layers["magic"] = X_smoothened
 
 # %%
@@ -231,32 +232,32 @@ import io
 marker_annotation = pd.read_table(
     io.StringIO(
         """ix	symbols	celltype
-0	CD34, SPINK2, MLLT3, RNF220, CALN1	HSCs
-0	AZU1, MPO	CMP/GMP
-0	CLIP2, BCL2, SFMBT2	LMPP
+0	CD34, SPINK2	Hematopoietic Stem Cell
+0	AZU1, MPO	Common Myeloid Progenitor
+0	CLIP2, BCL2, SFMBT2	Lymphoid Multipotent Progenitor
 
-1	FAM178B, WNT5B, PVT1	Early_Ery
-1	TFRC, PVT1, NCL	Mid_Ery
-1	HBA1, C17orf99, SLC4A1	Late_Ery
-1	MED12L, ITGA2B	Early_MK
-1	LTBP1, ITGA2B, CALD1, ITGB3	Late_MK
+1	FAM178B, WNT5B	Early Erythroid
+1	TFRC, PVT1	Mid Erythroid
+1	HBA1, SLC4A1	Late Erythroid
+1	MED12L, ITGA2B	Early Megakaryocyte
+1	CALD1, ITGB3	Late Megakaryocyte
 
-2	CD247, TOX2, NCAM1, IL2RB, NCR1	NK cells
+2	CD247, IL2RB	Natural Killer Cell
 
-3	BACE2, KIT, HDC	Granulocyte
+3	BACE2, HDC	Granulocyte
 
-4	FCN1, RETN, PLAUR, MYO1F	Mono
-4	CD163, CTSB, HLA-DPB1, HMOX1	KC-like
+4	FCN1, PLAUR	Monocyte
+4	CD163, HLA-DPB1, HMOX1	Macrophage
 
-5	IRF8, CLEC4C, PTPRS, IL3RA	pDCS
+5	IRF8, CLEC4C, IL3RA	plasmacytoid Dendritic Cell
 5	IL1R1, IL7R	ILC
 
-6	IL7R, PAX5, UHRF1, RRM2	Pre-Pro-B
-6	IL7R, PAX5, ARPP21	Pro-B
-6	IL7R, PAX5, FCRL1	Immature B
+6	PAX5, UHRF1	Pro-B Cell
+6	PAX5, ARPP21	Pre-B Cell
+6	PAX5, FCRL1	Immature B Cell
 
-7	CPS1, GPC3, ASS1, APOB	Hepatocytes
-7	LDB2, STAB2, NRG3	LSECs
+7	ASS1, APOB	Hepatocytes
+7	STAB2, NRG3	LSECs
 """
     )
 ).set_index("celltype")
@@ -286,61 +287,136 @@ sc.tl.leiden(adata_KC, resolution=0.4, flavor="igraph", n_iterations=-1)
 sc.pl.umap(adata_KC, color=["leiden", "celltype", "sample"])
 
 KC_0_cells = adata_KC.obs[adata_KC.obs['leiden'] == '0'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Macrophage_I')
-adata.obs.loc[KC_0_cells, 'celltype'] = 'Macrophage_I'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Macrophage_III')
+adata.obs.loc[KC_0_cells, 'celltype'] = 'Macrophage_III'
 
 KC_1_cells = adata_KC.obs[adata_KC.obs['leiden'] == '1'].index
 adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Macrophage_II')
 adata.obs.loc[KC_1_cells, 'celltype'] = 'Macrophage_II'
 
 KC_2_cells = adata_KC.obs[adata_KC.obs['leiden'] == '2'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Monocyte_III')
-adata.obs.loc[KC_2_cells, 'celltype'] = 'Monocyte_III'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Macrophage_I')
+adata.obs.loc[KC_2_cells, 'celltype'] = 'Macrophage_I'
 
 KC_3_cells = adata_KC.obs[adata_KC.obs['leiden'] == '3'].index
-adata.obs.loc[KC_3_cells, 'celltype'] = 'Monocyte_III'
+adata.obs.loc[KC_3_cells, 'celltype'] = 'Macrophage_I'
 
 
-adata.obs['celltype'] = adata.obs['celltype'].cat.remove_categories('KC-like')
+adata.obs['celltype'] = adata.obs['celltype'].cat.remove_categories('Macrophage')
 
 # %%
 # Monocytes
 cluster_8_cells = adata.obs[adata.obs['leiden'] == '8'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Monocyte_I')
-adata.obs.loc[cluster_8_cells, 'celltype'] = 'Monocyte_I'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Monocyte_II')
+adata.obs.loc[cluster_8_cells, 'celltype'] = 'Monocyte_II'
 
 cluster_9_cells = adata.obs[adata.obs['leiden'] == '9'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Monocyte_II')
-adata.obs.loc[cluster_9_cells, 'celltype'] = 'Monocyte_II'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Monocyte_I')
+adata.obs.loc[cluster_9_cells, 'celltype'] = 'Monocyte_I'
 
-adata.obs['celltype'] = adata.obs['celltype'].cat.remove_categories('Mono')
+adata.obs['celltype'] = adata.obs['celltype'].cat.remove_categories('Monocyte')
 
 # %%
 # Low Expression cluster / No markers
 
 cluster_1_cells = adata.obs[adata.obs['leiden'] == '1'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Low_Expr')
-adata.obs.loc[cluster_1_cells, 'celltype'] = 'Low_Expr'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Low Expression')
+adata.obs.loc[cluster_1_cells, 'celltype'] = 'Low Expression'
 
 # %%
 # MEP
 cluster_4_cells = adata.obs[adata.obs['leiden'] == '4'].index
 cluster_11_cells = adata.obs[adata.obs['leiden'] == '11'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('MEP')
-adata.obs.loc[cluster_4_cells, 'celltype'] = 'MEP'
-adata.obs.loc[cluster_11_cells, 'celltype'] = 'MEP'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Megakaryocyte Erythroid Progenitor')
+adata.obs.loc[cluster_4_cells, 'celltype'] = 'Megakaryocyte Erythroid Progenitor'
+adata.obs.loc[cluster_11_cells, 'celltype'] = 'Megakaryocyte Erythroid Progenitor'
 
 # %%
 # Weird cluster
 cluster_6_cells = adata.obs[adata.obs['leiden'] == '6'].index
-adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('Doublet_Ery_B')
-adata.obs.loc[cluster_6_cells, 'celltype'] = 'Doublet_Ery_B'
+adata.obs['celltype'] = adata.obs['celltype'].cat.add_categories('EBI Macrophages')
+adata.obs.loc[cluster_6_cells, 'celltype'] = 'EBI Macrophages'
 
 # %%
 adata.obs['celltype'] = adata.obs['celltype'].cat.reorder_categories(
     sorted(adata.obs['celltype'].cat.categories), ordered=True
 )
-sc.pl.umap(adata, color=["celltype"], wspace=0.5)
+
+grouped_palette = [
+    # Erythroid (reds/pinks)
+    '#67000d',  # HSC
+    '#a50f15',  # CMP
+    '#cb181d',  # MEP
+    '#de2d26',  # Early Erythroid
+    '#fb6a4a',  # Mid Erythroid
+    '#fcae91',  # Late Erythroid
+
+    # Megakaryocyte (purples)
+    '#dd3497',  # Early Megakaryocyte
+    '#f768a1',  # Late Megakaryocyte
+
+    # Myeloid (browns/oranges)
+    '#1a9850',  # Granulocyte
+    '#cc4c02',  # Monocyte_I 
+    '#993404',  # Monocyte_II 
+    '#fe9929',  # Macrophage_I
+    '#fdae6b',  # Macrophage_II 
+    '#fdd49e',  # Macrophage_III 
+    '#a6d854',  # Dendritic Cell
+    '#4daf4a',  # EBI Macrophages
+
+    # Lymphoid (blues)
+    '#08519c',  # LMPP
+    '#3182bd',  # Pro-B
+    '#6baed6',  # Pre-B
+    '#9ecae1',  # Immature B
+
+    # NK / ILC (greens)
+    '#1c9099',  # NK
+    '#005b5b',  # ILC
+
+    # Liver / Stromal (grays/yellows)
+    '#969696',  # LSECs
+    '#d9d9d9',  # Hepatocytes
+
+    # Low Expression (neutral)
+    '#bdbdbd'
+]
+
+desired_order = [
+    'Hematopoietic Stem Cell', 'Common Myeloid Progenitor', 'Megakaryocyte Erythroid Progenitor',
+    'Early Erythroid', 'Mid Erythroid', 'Late Erythroid',
+    'Early Megakaryocyte', 'Late Megakaryocyte',
+    'Granulocyte', 'Monocyte_I', 'Monocyte_II', 'Macrophage_I', 'Macrophage_II', 'Macrophage_III', 'plasmacytoid Dendritic Cell', 'EBI Macrophages',
+    'Lymphoid Multipotent Progenitor', 'Pro-B Cell', 'Pre-B Cell', 'Immature B Cell',
+    'Natural Killer Cell', 'ILC',
+    'LSECs', 'Hepatocytes',
+    'Low Expression'
+]
+
+adata.obs['celltype'] = adata.obs['celltype'].astype('category')
+adata.obs['celltype'] = adata.obs['celltype'].cat.reorder_categories(desired_order)
+
+
+sc.pl.umap(adata, color=["celltype"], palette=grouped_palette, frameon=False, size=2.5, legend_loc='right margin')
+
+# %%
+import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
+
+# Create a dictionary mapping cell types to colors
+palette_dict = dict(zip(desired_order, grouped_palette))
+
+# Create legend handles from the dictionary
+handles = [Patch(color=color, label=label) for label, color in palette_dict.items()]
+
+# Create a separate figure for the legend
+fig, ax = plt.subplots(figsize=(max(1, len(handles)*0.3), 1))  # width adjusts with number of labels
+ax.legend(handles=handles, loc='center', ncol=2, frameon=False)  # ncol can be adjusted
+ax.axis('off')  # hide axes
+
+plt.show()
+
 
 # %%
 pickle.dump(adata, (folder_data_preproc / "adata_annotated.pkl").open("wb"))
@@ -360,7 +436,7 @@ def symbol(adata, gene):
     return adata.var.reset_index().set_index("gene_ids").loc[gene, "symbol"]
 
 # %%
-sc.pl.umap(adata2, color=adata.var.index[(adata.var["symbol"] == "CCR2")][0])
+sc.pl.umap(adata, color=adata.var.index[(adata.var["symbol"] == "CCR2")][0])
 
 # %%
 adata2 = adata[adata.obs["celltype"].isin(["Monocyte_I", "Monocyte_II", "Monocyte_III", "Macrophage_I", "Macrophage_II"])]
@@ -440,22 +516,69 @@ sc.pl.dotplot(
             groupby="celltype"
             )
 
+# %% [markdown]
+# ### Subset for macrophages
+
 # %%
-adata2 = adata[adata.obs["celltype"].isin(["Monocyte_I", "Monocyte_II", "Monocyte_III", "Macrophage_I", "Macrophage_II"])]
+adata2 = adata[adata.obs["celltype"].isin(["Macrophage_II", "Macrophage_I", "EBI Macrophages"])]
 sc.tl.rank_genes_groups(
-    adata2, "celltype", method="logreg", key_added="logreg", use_raw=False
+    adata2, groupby="celltype", method="wilcoxon", key_added="wilcoxon3", use_raw=False,
 )
 
 # %%
 # Extract the dictionary of gene names from recarray
-top_genes = {cluster: adata2.uns["logreg"]["names"][cluster] for cluster in adata2.uns["logreg"]["names"].dtype.names}
+top_genes = {cluster: adata2.uns["wilcoxon3"]["names"][cluster] for cluster in adata2.uns["wilcoxon3"]["names"].dtype.names}
 
 # Convert to DataFrame
-num_top_genes = 20  # Adjust the number of genes to retrieve
+num_top_genes = 10  # Adjust the number of genes to retrieve
 top_genes_df = pd.DataFrame({f"Cluster {cluster}": top_genes[cluster][:num_top_genes] for cluster in top_genes})
 
 # %%
+top_genes = symbol(adata2, top_genes_df.T.values.flatten())
+
 sc.pl.dotplot(adata2, 
-              var_names=symbol(adata2, np.unique(top_genes_df.values.flatten())), 
+              var_names=top_genes, 
               gene_symbols="symbol",
-              groupby="celltype")
+              groupby="celltype",
+              layer="magic",
+              cmap="rocket",
+              swap_axes=True,)
+
+sc.pl.heatmap(adata2, 
+              var_names=top_genes, 
+              gene_symbols="symbol",
+              groupby="celltype",
+              layer="magic",
+              cmap="rocket",
+              swap_axes=True,)
+
+# %%
+# GOI = [ 
+#         "ITGAM", "CD14", "CD68", "CD163", "FCGR2A", "ADGRE1", "MERTK", # macrophage markers
+#         "CD5L", "SLC1A3", "CD163", "FOLR2", "TIMD4", "MARCO", "GFRA2", "ADRB1", "TMEM26", "SLC40A1", "HMOX1", "SLC16A9", "VCAM1", "SUCNR1", # conserved KC markers
+#         "SPI1",  "ITGAM","MSR1", "SIGLEC1", "ADGRE1",  "CCR2", "ID3", "ID1", # more KC markers
+#         "ANK1", "WNT5B","GATA2", "EPOR", "GATA1", "HBA2", "HBA1", "EMP2", "TIMD4",  # possible EBI macro markers
+#         "SAT1", "SAMHD1",  "CLEC7A", "CD83",  "GFRA2", "MYOF", "CD86", "CD163", "MRC1", "HMOX1", "CLEC4F", "FCGR2A",  
+#         "CX3CR1", "TLR4", "CD14", "CD68", "CCR2", "FCGR3A", "HLA-DRA", "ITGAX", "CLEC5A"
+#        ]
+
+GOI = [ 
+        "EMP2", "EPOR", "ILF2", "SIGLEC1", "VCAM1"
+]
+sc.pl.heatmap(adata2, 
+              var_names=GOI, 
+              gene_symbols="symbol",
+              groupby="celltype",
+              swap_axes=True,
+              layer="magic",
+              cmap="rocket"
+              )
+
+sc.pl.dotplot(adata2, 
+              var_names=GOI, 
+              gene_symbols="symbol",
+              groupby="celltype",
+              swap_axes=True,
+              layer="magic",
+              cmap="rocket"
+              )
